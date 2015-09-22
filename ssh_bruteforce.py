@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import sys, os, socket
 from datetime import datetime
 # foreign dependency for ssh capability
@@ -44,7 +45,7 @@ def brute_force(username, host, passwords_file):
             resp = ssh_connect(password)
 
             if(resp == 0):
-                print(OKGREEN+line+" SUCCESS [*] User: "+username+
+                print(OKGREEN+line+"[*] SUCCESS [*] User: "+username+
                 " [*] Pass: "+password+ENDC )
                 sys.exit(0)
             elif(resp == 1):
